@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
 Standalone Reproducible Verification & Figure Generation Suite for Paper XII:
-"Universal Mother-Wavelet Dilation and the Phase-Independent Confocal Ellipse
-Identity in the Selberg Class versus Breakdown of Prime-Gauge Purity and
-Chladni Chamber Topology in the Davenport-Heilbronn Counterexample"
+"Hecke Theta-Integral Kernels and Single-Mode Damping in General Degree L-Functions
+versus Off-Line Zero Diagnostics in the Davenport-Heilbronn Counterexample"
 
 Author: Thijs Missiaen (Independent Researcher, Belgium)
 ORCID:  https://orcid.org/0009-0007-3678-0810
@@ -11,7 +10,7 @@ ORCID:  https://orcid.org/0009-0007-3678-0810
 Precision Standards:
 - 60-decimal arbitrary-precision arithmetic (`mpmath.mp.dps = 60`)
 - 35-decimal directed-rounding interval arithmetic (`mpmath.iv.dps = 35`)
-- Vectorized PyTorch GPU (`torch.float64` CUDA) 2D Chladni & Wronskian continuum scan
+- Vectorized PyTorch GPU (`torch.float64` CUDA) 2D nodal & Wronskian continuum scan
 - Generates 300-DPI vector PDF (`rasterized=True` on 2D meshes, < 500 KB) and PNG figures
 """
 
@@ -221,13 +220,13 @@ def Xi_DH_derivatives(d: mp.mpf, t: mp.mpf):
 
 
 # ==============================================================================
-# PILLAR 1: Universal Mother-Wavelet Dilation & Symmetric Branch Damping
+# PILLAR 1: Hecke Theta-Integral Dilation & High-Frequency Branch Damping
 # ==============================================================================
 
-def verify_pillar1_mother_wavelet_and_branch_damping():
+def verify_pillar1_hecke_dilation_and_branch_damping():
     global D_STAR, GAMMA_STAR, S0_DH
     print("=" * 86)
-    print("PILLAR 1: UNIVERSAL MOTHER-WAVELET DILATION & SYMMETRIC BRANCH DAMPING (THEOREM 2.1)")
+    print("PILLAR 1: HECKE THETA-INTEGRAL DILATION & SYMMETRIC BRANCH DAMPING (THEOREM 2.1)")
     print("=" * 86)
 
     # 1A. Refine s_0 = 1/2 + d_* + i*gamma_* to 60 decimals via complex Newton step
@@ -244,7 +243,7 @@ def verify_pillar1_mother_wavelet_and_branch_damping():
     print(f"[60-dps Zero Residual]   |Xi_DH(gamma_* - i*d_*)| = {mp.nstr(res_s0, 12)}")
     assert res_s0 < mp.mpf("1e-55"), "Off-line zero residual must be < 1e-55"
 
-    # 1B. Verify closed-form Mother-Wavelet Mellin integrals for:
+    # 1B. Verify closed-form single-mode Hecke Mellin-theta integrals for:
     # Universal convention: Xi_f(z) = 4 * int_{-infty}^{infty} Phi_f(u) e^{2 i z u} du,
     # where G_f(s) = 4 * int_{-infty}^{infty} varphi_1^{(f)}(w) e^{2(s - 1/2)w} dw:
     # (i)   Riemann zeta (d_f = 1): varphi_1^(zeta)(w) = (2*pi^2*e^{9w} - 3*pi*e^{5w})*exp(-pi*e^{4w})
@@ -273,7 +272,7 @@ def verify_pillar1_mother_wavelet_and_branch_damping():
     err_odd5_mw = abs(G_odd5_int - G_odd5_exact) / abs(G_odd5_exact)
     err_delta_mw = abs(G_delta_int - G_delta_exact) / abs(G_delta_exact)
 
-    print("\n[Theorem 2.1(a)] Exact Bilateral Laplace-Mellin Mother-Wavelet Identity Verification:")
+    print("\n[Theorem 2.1(a)] Exact Bilateral Laplace-Mellin Hecke Kernel Identity Verification:")
     print(f"  Class d_f=1 (Riemann zeta)     : rel. Mellin error = {mp.nstr(err_zeta_mw, 8)}")
     print(f"  Class d_f=1 (Odd mod-5 / DH)   : rel. Mellin error = {mp.nstr(err_odd5_mw, 8)}")
     print(f"  Class d_f=2 (Ramanujan Delta)  : rel. Mellin error = {mp.nstr(err_delta_mw, 8)}")
@@ -290,7 +289,7 @@ def verify_pillar1_mother_wavelet_and_branch_damping():
         phi_m_delta_direct = mp.mpf("0.5") * mp.mpf(RAMANUJAN_TAU[m]) * mp.exp(12 * u_pt) * mp.exp(-2 * mp.pi * m * mp.exp(2 * u_pt))
         phi_m_delta_dilated = (a_Delta(m) / mp.sqrt(m)) * varphi1_delta(u_pt + mp.mpf("0.5") * mp.ln(m))
         max_dilation_err = max(max_dilation_err, abs(phi_m_direct - phi_m_dilated), abs(phi_m_delta_direct - phi_m_delta_dilated))
-    print(f"  Max Mother-Wavelet Dilation Error across m=1..8 (DH & Delta): {mp.nstr(max_dilation_err, 8)}")
+    print(f"  Max Hecke Theta-Kernel Dilation Error across m=1..8 (DH & Delta): {mp.nstr(max_dilation_err, 8)}")
     assert max_dilation_err < mp.mpf("1e-55")
 
     # 1C. Symmetric Branch-Damping Inequality across zeta, D_DH, and L(s, Delta)
@@ -334,6 +333,13 @@ def verify_pillar1_mother_wavelet_and_branch_damping():
     for name, df, tv, ns, nf, rg, bd, mg in branch_rows:
         print(f"{name:<24s} | {df:3d} | {mp.nstr(tv, 8):>10s} | {mp.nstr(ns, 8):>10s} | {nf:6d} | {mp.nstr(rg, 10):>15s} | {mp.nstr(bd, 10):>16s} | {mp.nstr(mg, 6):>13s}")
         assert mg > 0, f"Symmetric branch damping failed for {name}"
+
+    # Verify tetragamma psi_2 positivity Re psi_2(sigma + i*tau) > 0 for |tau| > sigma > 0:
+    psi2_zeta = mp.re(mp.psi(2, mp.mpf("0.25") + d1 / 2 + 0.5j * t1))
+    psi2_dh = mp.re(mp.psi(2, mp.mpf("0.75") + d1 / 2 + 0.5j * t1))
+    psi2_del = mp.re(mp.psi(2, mp.mpf("6.0") + d1 + 1j * t_del))
+    print(f"  Tetragamma Re psi_2 positivity: zeta={mp.nstr(psi2_zeta, 8)}, DH={mp.nstr(psi2_dh, 8)}, Delta={mp.nstr(psi2_del, 8)} (> 0)")
+    assert psi2_zeta > 0 and psi2_dh > 0 and psi2_del > 0
 
     return {
         "theta_p_dh": theta_p_dh,
@@ -424,7 +430,7 @@ def verify_pillar2_confocal_ellipse_identity():
         assert mp.iv.mpf("0") in diff_iv, f"Interval enclosure failed for mode n={n}"
         max_iv_width = max(max_iv_width, mp.mpf(float(diff_iv.delta)))
 
-        mtype = "Mother" if n == 1 else ("Prime" if n in (2, 3, 5, 7) else f"Comp ({n})")
+        mtype = "Principal" if n == 1 else ("Prime" if n in (2, 3, 5, 7) else f"Comp ({n})")
         mode_rows.append({
             "n": n,
             "type": mtype,
@@ -469,12 +475,12 @@ def verify_pillar2_confocal_ellipse_identity():
 
 
 # ==============================================================================
-# PILLAR 3: Multiplicativity Defect +-(1+kappa^2) & Prime-Gauge Breakdown
+# PILLAR 3: Multiplicativity Defect +-(1+kappa^2) & Euler-Product Mollification
 # ==============================================================================
 
 def verify_pillar3_multiplicativity_defect_and_prime_gauge(p2_data):
     print("\n" + "=" * 86)
-    print("PILLAR 3: MULTIPLICATIVITY DEFECT & BREAKDOWN OF PRIME-GAUGE PURITY (THEOREM 4.1)")
+    print("PILLAR 3: MULTIPLICATIVITY DEFECT & EULER-PRODUCT MOLLIFICATION (THEOREM 4.1)")
     print("=" * 86)
 
     # 3A. Exact Algebraic Defect Law delta_DH(m,n) = a_DH(mn) - a_DH(m)*a_DH(n) = +-(1 + kappa^2)
@@ -500,7 +506,7 @@ def verify_pillar3_multiplicativity_defect_and_prime_gauge(p2_data):
     print(f"  delta_DH(3,3) at N=9  = {mp.nstr(delta_33, 25)} (= -(1 + kappa^2))")
     print(f"  delta_DH(2,7) at N=14 = {mp.nstr(delta_27, 25)} (= -(1 + kappa^2))")
 
-    # 3B. Formal Dirichlet logarithm Lambda_DH(n)/ln(n) vs. Euler-product Prime-Power Purity
+    # 3B. Formal Dirichlet logarithm Lambda_DH(n)/ln(n) vs. Euler-product divisor filtering
     Nmax = 20
     Lambda_DH = [mp.mpf("0")] * (Nmax + 1)
     for n in range(2, Nmax + 1):
@@ -560,7 +566,7 @@ def verify_pillar3_multiplicativity_defect_and_prime_gauge(p2_data):
             b_zeta = "0 (composite)"
         lam_ratio = mp.mpf("0") if N == 1 else Lambda_DH[N] / mp.ln(N)
         fac_str = {
-            1: "1 (Mother)", 2: "2 (Prime)", 3: "3 (Prime)", 4: "2^2 (Square)",
+            1: "1 (Principal)", 2: "2 (Prime)", 3: "3 (Prime)", 4: "2^2 (Square)",
             5: "5 (Prime)", 6: "2*3 (Semipr)", 7: "7 (Prime)", 8: "2^3 (Cube)",
             9: "3^2 (Square)", 10: "2*5 (Semipr)", 11: "11 (Prime)", 12: "2^2*3 (Comp)",
             13: "13 (Prime)", 14: "2*7 (Semipr)"
@@ -598,17 +604,19 @@ def verify_pillar3_multiplicativity_defect_and_prime_gauge(p2_data):
 
     pct_primes = 100 * abs(T_primes) / abs(T1)
     pct_comps = 100 * abs(T_comps) / abs(T1)
+    pct_tail = 100 * abs(T_total) / abs(T1)
     pct_mult_comps = 100 * abs(T_mult_comps) / abs(T1)
     amp_boost = 1 / (KAPPA_DH ** 2)
 
     print("\n[Theorem 4.1(d)] Quantitative Destructive-Interference Anatomy at (d_*, gamma_*):")
-    print(f"  Mother-Wavelet Anchor |T_1^(DH)(d*, gamma*)|          = {mp.nstr(abs(T1), 16)}")
-    print(f"  All Primes n in {{2,3,5,7}} |sum T_p^(DH)|            = {mp.nstr(abs(T_primes), 16)} ({mp.nstr(pct_primes, 6)}% of |T_1| -> CANNOT cancel T_1!)")
-    print(f"  Non-Mult Composites n in {{4,6,8}} |sum T_c^(DH)|     = {mp.nstr(abs(T_comps), 16)} ({mp.nstr(pct_comps, 6)}% of |T_1|, boosted {mp.nstr(amp_boost, 6)}x)")
+    print(f"  Leading Term |T_1^(DH)(d*, gamma*)|                   = {mp.nstr(abs(T1), 16)}")
+    print(f"  All Primes n in {{2,3,5,7}} |sum T_p^(DH)|            = {mp.nstr(abs(T_primes), 16)} ({mp.nstr(pct_primes, 6)}% of |T_1|)")
+    print(f"  Non-Mult Composites n in {{4,6,8}} |sum T_c^(DH)|     = {mp.nstr(abs(T_comps), 16)} ({mp.nstr(pct_comps, 6)}% of |T_1|, ratio 1/kappa^2 = {mp.nstr(amp_boost, 6)}x)")
+    print(f"  8-Mode Residual / RS Tail |R_8^(DH)| = |T_{{1..8}}|   = {mp.nstr(abs(T_total), 16)} ({mp.nstr(pct_tail, 6)}% of |T_1|)")
     print(f"  Multiplicative Composites n in {{4,6,8}} |sum T_c^mult| = {mp.nstr(abs(T_mult_comps), 16)} ({mp.nstr(pct_mult_comps, 6)}% of |T_1|)")
     print(f"  8-Mode Main Sum |T_{{1..8}}^(DH)| vs. |T_{{1..8}}^mult| = {mp.nstr(abs(T_total), 12)} vs. {mp.nstr(abs(T_mult_total), 12)}")
 
-    assert pct_primes < 40 and pct_comps > 50 and abs(T_mult_total) > mp.mpf("1.4")
+    assert pct_primes < 40 and pct_comps > 50 and pct_tail > 7 and abs(T_mult_total) > mp.mpf("1.4")
 
     return {
         "one_plus_k2": one_plus_k2,
@@ -682,7 +690,7 @@ def verify_pillar4_fourfold_diagnostics():
     assert W_tilde_0 < 0 and lhs_int_law < 0 and err_int_law < mp.mpf("1e-45")
 
     # 4C. Instrument III: Quantized Hadamard Flux Jump & Arcsine Lobe Cancellation
-    print("\n[Instrument III: Quantized Hadamard-Krein Flux Jump & Arcsine Lobe Cancellation]")
+    print("\n[Instrument III: Quantized Poisson-Hadamard Flux Jump & Arcsine Lobe Cancellation]")
     d_sub = mp.mpf("0.15")
     u0_sub = mp.sqrt(D_STAR ** 2 - d_sub ** 2)
     K_had = lambda d, u: d * (d ** 2 - D_STAR ** 2 + u ** 2) / (((d - D_STAR) ** 2 + u ** 2) * ((d + D_STAR) ** 2 + u ** 2))
@@ -691,7 +699,7 @@ def verify_pillar4_fourfold_diagnostics():
     arcsin_exact = mp.asin(d_sub / D_STAR)
     err_arcsin = max(abs(flux_neg_lobe + arcsin_exact), abs(flux_pos_tail - arcsin_exact))
     print(f"  At d = 0.15 < d_*: u_0 = sqrt(d_*^2 - d^2) = {mp.nstr(u0_sub, 16)}")
-    print(f"  Negative Krein Lobe int_{{-u_0}}^{{u_0}} K du = {mp.nstr(flux_neg_lobe, 16)} vs. -arcsin(d/d_*) = {mp.nstr(-arcsin_exact, 16)}")
+    print(f"  Negative Central Lobe int_{{-u_0}}^{{u_0}} K du = {mp.nstr(flux_neg_lobe, 16)} vs. -arcsin(d/d_*) = {mp.nstr(-arcsin_exact, 16)}")
     print(f"  Positive Tail       2*int_{{u_0}}^inf K du    = {mp.nstr(flux_pos_tail, 16)} vs. +arcsin(d/d_*) = {mp.nstr(+arcsin_exact, 16)}")
     print(f"  Net Sub-Zero Flux   Phi_Had(0.15; d_*)      = {mp.nstr(flux_neg_lobe + flux_pos_tail, 6)} (Arcsine identity err = {mp.nstr(err_arcsin, 6)})")
     assert err_arcsin < mp.mpf("1e-50")
@@ -826,10 +834,16 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
     # Evaluate Xi_DH(t - i*d) * exp(pi*t/4) on a 2D continuum grid (d, t) in [0.0, 0.45] x [83.0, 88.0]
     # using the fast Poisson-Jacobi u-domain quadrature on GPU (torch.float64):
     # Xi_DH(t - i*d) = 2 * int_{-infty}^{infty} Phi_DH(u) * cosh(2*d*u) * cos(2*t*u) du + i * 2 * int_{-infty}^{infty} Phi_DH(u) * sinh(2*d*u) * sin(2*t*u) du
-    # Wait: in u-domain, since Phi_DH(u) is NOT even (because a_DH(m) has changing signs and no functional eq on uncompleted sum without Poisson),
-    # Wait: xi_DH(s) DOES satisfy xi_DH(s) = xi_DH(1-s) because chi_5 is a primitive odd character mod 5 with Gauss sum tau(chi_5) = i*sqrt(5),
-    # so Phi_DH(u) = Phi_DH(-u) IS strictly EVEN!
-    # Let's verify that Phi_DH(u) = sum_{m=1}^infty 2*a_DH(m)*m*(pi/5)^{3/4}*e^{3u}*exp(-(pi/5)*m^2*e^{4u}) satisfies Phi_DH(u) = Phi_DH(-u)!
+    # Exact Gauss sum tau(chi_5) = sum_{a=1}^4 chi_5(a) exp(2*pi*i*a/5) = -sqrt((5-sqrt(5))/2) + i*sqrt((5+sqrt(5))/2),
+    # with |tau(chi_5)| = sqrt(5) and root number eps(chi_5) = tau(chi_5)/(i*sqrt(5)) = (1 + i*kappa)/(1 - i*kappa),
+    # so xi_DH(s) = xi_DH(1-s) and Phi_DH(u) = Phi_DH(-u) is strictly even.
+    chi5_vals = [mp.mpc(1), mp.mpc(0, 1), mp.mpc(0, -1), mp.mpc(-1)]
+    tau_chi5_sum = sum(chi5_vals[a - 1] * mp.exp(2j * mp.pi * mp.mpf(a) / 5) for a in range(1, 5))
+    tau_chi5_closed = -mp.sqrt((5 - mp.sqrt(5)) / 2) + 1j * mp.sqrt((5 + mp.sqrt(5)) / 2)
+    eps_chi5 = tau_chi5_closed / (1j * mp.sqrt(5))
+    assert abs(tau_chi5_sum - tau_chi5_closed) < mp.mpf("1e-58")
+    assert abs(eps_chi5 - (1 + 1j * KAPPA_DH) / (1 - 1j * KAPPA_DH)) < mp.mpf("1e-58")
+    # Verify that Phi_DH(u) = sum_{m=1}^infty 2*a_DH(m)*m*(pi/5)^{3/4}*e^{3u}*exp(-(pi/5)*m^2*e^{4u}) satisfies Phi_DH(u) = Phi_DH(-u):
     u_test = mp.mpf("0.23")
     phi_pos = sum(2 * a_DH(m) * m * mp.power(mp.pi / 5, mp.mpf("0.75")) * mp.exp(3 * u_test) * mp.exp(-(mp.pi / 5) * (m ** 2) * mp.exp(4 * u_test)) for m in range(1, 40))
     phi_neg = sum(2 * a_DH(m) * m * mp.power(mp.pi / 5, mp.mpf("0.75")) * mp.exp(-3 * u_test) * mp.exp(-(mp.pi / 5) * (m ** 2) * mp.exp(-4 * u_test)) for m in range(1, 40))
@@ -934,7 +948,7 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
     ax1a, ax1b = axes1[0, 0], axes1[0, 1]
     ax1c, ax1d = axes1[1, 0], axes1[1, 1]
 
-    # Panel (a): Universal Mother-Wavelet Dilation & Confocal Mode Ellipses E_n^{(DH)}(d_*, t)
+    # Panel (a): Hecke Theta-Kernel Dilation & Confocal Mode Ellipses E_n^{(DH)}(d_*, t)
     phi_sweep = np.linspace(0, 2 * np.pi, 300)
     colors_ell = ["#003366", "#1f77b4", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2"]
     mode_rows = p2_data["mode_rows"]
@@ -984,7 +998,7 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
     ax1b.scatter([float(GAMMA_STAR)], [float(D_STAR)], color="gold", edgecolor="black", s=95, marker="*", zorder=8, label=f"Off-line zero $(d_*,\\gamma_*)$")
     ax1b.scatter([float(p4_data["tau_false"])], [0.0], color="cyan", edgecolor="black", s=50, marker="o", zorder=8, label=f"False saddle $z_c={float(p4_data['tau_false']):.2f}$")
     ax1b.scatter([float(p4_data["t_tip"])], [float(p4_data["d_tip"])], color="#ff6600", edgecolor="black", s=50, marker="^", zorder=8, label=f"Parabola tip $d_{{\\mathrm{{tip}}}}={float(p4_data['d_tip']):.3f}$")
-    ax1b.set_title("(b) Chladni Nodal Bifurcation $I_{\\mathrm{DH}}=0$ (solid) & $R_{\\mathrm{DH}}=0$ (dashed)")
+    ax1b.set_title("(b) Nodal Bifurcation $I_{\\mathrm{DH}}=0$ (solid) & $R_{\\mathrm{DH}}=0$ (dashed)")
     ax1b.set_xlabel("Spectral height $t$")
     ax1b.set_ylabel("Transverse distance $d = \\sigma - 1/2$")
     ax1b.legend(loc="upper right", framealpha=0.92, fontsize=7.3)
@@ -1037,7 +1051,7 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
     plt.close(fig1)
 
     # ==========================================================================
-    # FIGURE 2: 4-Panel Prime-Gauge Purity Breakdown, Hadamard Flux & De Branges
+    # FIGURE 2: 4-Panel Sieved Divisor-Filter Defects, Hadamard Flux & De Branges
     # ==========================================================================
     fig2, axes2 = plt.subplots(2, 2, figsize=(11.5, 8.8), dpi=300)
     ax2a, ax2b = axes2[0, 0], axes2[0, 1]
@@ -1048,11 +1062,11 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
     b_zeta_vals = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0/3.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0]
     b_dh_vals = [float(abs(p3_data["b_exp_dh"][n])) for n in N_idx]
     width_bar = 0.38
-    ax2a.bar(N_idx - width_bar/2, b_zeta_vals, width=width_bar, color="#003366", label="Automorphic $\\zeta(s)E_5(s)$ (Prime-power pure on $(5,25]$)")
+    ax2a.bar(N_idx - width_bar/2, b_zeta_vals, width=width_bar, color="#003366", label="Automorphic $\\zeta(s)E_5(s)$ (Prime powers only on $(5,25]$)")
     ax2a.bar(N_idx + width_bar/2, b_dh_vals, width=width_bar, color="#d62728", label="$\\mathcal{D}_{\\mathrm{DH}}(s)E_5^{\\mathcal{E}}(s)$ (Defects $|b_4|=|b_6|=1+\\kappa^2$)")
     ax2a.axhline(float(p3_data["one_plus_k2"]), color="#d62728", ls="--", lw=1.1, label=f"$1+\\kappa^2 = {float(p3_data['one_plus_k2']):.4f}$")
     ax2a.set_xticks(N_idx)
-    ax2a.set_title("(a) Breakdown of Prime-Gauge Purity $|b_N^{\\mathcal{E}}(5)|$ at $N=4, 6, 9, 14$")
+    ax2a.set_title("(a) Sieved Divisor-Filter Coefficients $|b_N^{\\mathcal{E}}(5)|$ ($N=1..14$)")
     ax2a.set_xlabel("Dirichlet mode index $N$")
     ax2a.set_ylabel("Sieved coefficient magnitude $|b_N^{\\mathcal{E}}(5)|$")
     ax2a.legend(loc="upper right", framealpha=0.9, fontsize=7.5)
@@ -1066,20 +1080,21 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
     T_tot_c = complex(p3_data["T_total"])
     T_mult_c = complex(p3_data["T_mult_total"])
 
-    ax2b.quiver(0, 0, T1_c.real, T1_c.imag, angles="xy", scale_units="xy", scale=1, color="#003366", width=0.008, label=f"Mother wavelet $T_1$ ($|T_1|={abs(T1_c):.3f}$)")
+    ax2b.quiver(0, 0, T1_c.real, T1_c.imag, angles="xy", scale_units="xy", scale=1, color="#003366", width=0.008, label=f"Leading mode $T_1$ ($|T_1|={abs(T1_c):.3f}$)")
     ax2b.quiver(T1_c.real, T1_c.imag, Tp_c.real, Tp_c.imag, angles="xy", scale_units="xy", scale=1, color="#2ca02c", width=0.008, label=f"Primes $p\\in\\{{2,3,5,7\\}}$ ($38.82\\%$ of $|T_1|$)")
     p_end = T1_c + Tp_c
     ax2b.quiver(p_end.real, p_end.imag, Tc_c.real, Tc_c.imag, angles="xy", scale_units="xy", scale=1, color="#d62728", width=0.008, label=f"DH composites $n\\in\\{{4,6,8\\}}$ ($54.03\\%$ of $|T_1|$)")
-    ax2b.scatter([T_tot_c.real], [T_tot_c.imag], color="#d62728", edgecolor="black", s=70, zorder=6, label=f"True 8-mode sum ($|T_{{1..8}}|={abs(T_tot_c):.3f}$)")
-    ax2b.scatter([T_mult_c.real], [T_mult_c.imag], color="#003366", edgecolor="black", marker="s", s=65, zorder=6, label=f"Multiplicative sum ($|T_{{1..8}}^{{\\mathrm{{mult}}}}|={abs(T_mult_c):.3f} > 0$)")
+    ax2b.quiver(T_tot_c.real, T_tot_c.imag, -T_tot_c.real, -T_tot_c.imag, angles="xy", scale_units="xy", scale=1, color="#7f7f7f", width=0.007, label=f"RS remainder $\\mathcal{{R}}_8$ ($7.25\\%$ of $|T_1|$)")
+    ax2b.scatter([T_tot_c.real], [T_tot_c.imag], color="#d62728", edgecolor="black", s=65, zorder=6, label=f"8-mode sum ($|T_{{1..8}}|={abs(T_tot_c):.3f}$)")
+    ax2b.scatter([T_mult_c.real], [T_mult_c.imag], color="#003366", edgecolor="black", marker="s", s=60, zorder=6, label=f"Multiplicative sum ($|T_{{1..8}}^{{\\mathrm{{mult}}}}|={abs(T_mult_c):.3f}$)")
     ax2b.axhline(0, color="gray", lw=0.6)
     ax2b.axvline(0, color="gray", lw=0.6)
     ax2b.set_xlim(-0.25, 2.65)
-    ax2b.set_ylim(-0.15, 0.42)
-    ax2b.set_title("(b) Vector Cancellation Anatomy at $(d_*, \\gamma_*)$ ($N_5(\\gamma_*)=8$)")
+    ax2b.set_ylim(-0.15, 0.45)
+    ax2b.set_title("(b) Vector Cancellation & RS Remainder at $(d_*, \\gamma_*)$ ($N_5(\\gamma_*)=8$)")
     ax2b.set_xlabel("$\\mathrm{Re}\\,T$")
     ax2b.set_ylabel("$\\mathrm{Im}\\,T$")
-    ax2b.legend(loc="upper left", framealpha=0.9, fontsize=7.3)
+    ax2b.legend(loc="upper left", framealpha=0.9, fontsize=6.9)
     ax2b.grid(True, alpha=0.25)
 
     # Panel (c): Quantized Hadamard Flux Step pi*Theta(d - d_*) & Arcsine Lobe Cancellation
@@ -1091,7 +1106,7 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
 
     ax2c.plot(d_flux_grid, flux_step, color="black", lw=2.3, label="Total flux $\\Phi_{\\mathrm{Had}}(d; d_*) = \\pi\\,\\Theta(d - d_*)$")
     ax2c.plot(d_flux_grid[d_flux_grid < d_star_f], lobe_pos[d_flux_grid < d_star_f], color="#1f77b4", ls="--", lw=1.7, label="Positive tail $+\\arcsin(d/d_*)$ ($|u| > u_0$)")
-    ax2c.plot(d_flux_grid[d_flux_grid < d_star_f], lobe_neg[d_flux_grid < d_star_f], color="#d62728", ls="--", lw=1.7, label="Negative Krein lobe $-\\arcsin(d/d_*)$ ($|u| < u_0$)")
+    ax2c.plot(d_flux_grid[d_flux_grid < d_star_f], lobe_neg[d_flux_grid < d_star_f], color="#d62728", ls="--", lw=1.7, label="Negative central lobe $-\\arcsin(d/d_*)$ ($|u| < u_0$)")
     ax2c.axvline(d_star_f, color="gray", ls=":", lw=1.2, label=f"$d_* = {d_star_f:.4f}$")
     ax2c.set_yticks([-np.pi/2, 0, np.pi/2, np.pi])
     ax2c.set_yticklabels(["$-\\pi/2$", "$0$", "$\\pi/2$", "$\\pi$"])
@@ -1116,8 +1131,8 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
     ax2d.plot(d_db_grid, theta_db_vals, color="#003366", lw=2.1, label="$|\\Theta_\\alpha(\\gamma_* + \\mathrm{i}d)|$ ($\\alpha = 0.015$)")
     ax2d.axhline(1.0, color="black", lw=1.1, ls="--", label="Critical threshold $|\\Theta_\\alpha| = 1$")
     ax2d.axvline(d_star_f, color="#d62728", lw=1.3, ls=":", label=f"Sylvester jump at $d_* = {d_star_f:.4f}$")
-    ax2d.fill_between(d_db_grid, theta_db_vals, 1.0, where=(d_db_grid < d_star_f), color="#d62728", alpha=0.20, label="Indefinite Pontryagin $\\Pi_1$ ($\\nu_- = 1$)")
-    ax2d.fill_between(d_db_grid, theta_db_vals, 1.0, where=(d_db_grid >= d_star_f), color="#2ca02c", alpha=0.20, label="Positive-definite de Branges ($\\nu_- = 0$)")
+    ax2d.fill_between(d_db_grid, theta_db_vals, 1.0, where=(d_db_grid < d_star_f), color="#d62728", alpha=0.20, label="Indefinite kernel ($|\\Theta_\\alpha| > 1$, $\\nu_- = 1$)")
+    ax2d.fill_between(d_db_grid, theta_db_vals, 1.0, where=(d_db_grid >= d_star_f), color="#2ca02c", alpha=0.20, label="Positive-definite kernel ($|\\Theta_\\alpha| < 1$, $\\nu_- = 0$)")
     ax2d.set_title("(d) De Branges Inner Function $|\\Theta_\\alpha|$ & Sylvester Jump $\\nu_- : 0 \\to 1$")
     ax2d.set_xlabel("Transverse distance $d$")
     ax2d.set_ylabel("Inner function modulus $|\\Theta_\\alpha(\\gamma_* + \\mathrm{i}d)|$")
@@ -1142,7 +1157,7 @@ def run_gpu_continuum_scan_and_generate_figures(p1_data, p2_data, p3_data, p4_da
 
 def main():
     t_start = time.perf_counter()
-    p1 = verify_pillar1_mother_wavelet_and_branch_damping()
+    p1 = verify_pillar1_hecke_dilation_and_branch_damping()
     p2 = verify_pillar2_confocal_ellipse_identity()
     p3 = verify_pillar3_multiplicativity_defect_and_prime_gauge(p2)
     p4 = verify_pillar4_fourfold_diagnostics()

@@ -1,59 +1,39 @@
 ---
 name: selberg-class-davenport-heilbronn
-description: Scientific knowledge skill for Paper XII of the Transverse Wronskian series on Riemann's Xi-function. Contains the proven analytical identities and 60-decimal mpmath / 35-decimal mpmath.iv certifications for Universal Mother-Wavelet Dilation and Symmetric Branch Damping in the Selberg Class, the Phase-Independent Confocal Ellipse Identity, the Multiplicativity Defect +-(1+kappa^2) and Breakdown of Prime-Gauge Purity at N=4,6 in the Davenport-Heilbronn counterexample, and the Four-Fold Diagnostic Detection of the first off-line zero (d_*, gamma_*).
+description: Canonical formulas, verified numerical diagnostics, and scope boundaries for Paper XII on Hecke theta-integral kernels, single-mode hyperbolic identities, multiplicativity defects, and four-layer off-line zero detection in the Davenport-Heilbronn counterexample.
 ---
 
-# Universal Mother-Wavelet Dilation and the Phase-Independent Confocal Ellipse Identity in the Selberg Class versus Breakdown of Prime-Gauge Purity and Chladni Chamber Topology in the Davenport–Heilbronn Counterexample (Paper XII)
+# Skill: Hecke Kernels vs. Davenport–Heilbronn Off-Line Zero Diagnostics (Paper XII)
 
-## 1. Scope and Mathematical Architecture
+## 1. Canonical Wronskian & Wigner Normalization
 
-This skill encapsulates the analytical theorems, exact mode-by-mode algebraic decompositions, directed-rounding `mpmath.iv` interval-arithmetic enclosures, and GPU continuum verification procedures of **Paper XII** in the series on the Transverse Wronskian of Riemann's Ξ-Function (author: Thijs Missiaen, ORCID: [0009-0007-3678-0810](https://orcid.org/0009-0007-3678-0810)). Paper XII resolves the classical **Davenport–Heilbronn litmus test** (Titchmarsh 1986, Section 10.25; Davenport & Heilbronn 1936; Bombieri & Ghosh 2011; Balanzario & Sánchez-Ortiz 2007) by establishing a sharp structural dichotomy between universal harmonic laws that hold for every self-dual Dirichlet series with a Gamma functional equation and the Euler-product closure mechanisms that fail for the non-multiplicative Davenport–Heilbronn counterexample $\mathcal{D} _ {\mathrm{DH}}(s)$:
+For $\Xi _ f(z) = 8 \int _ 0^\infty \Phi _ f(u)\cos(2zu)\,\mathrm{d}u$ with $\Xi _ f(t - \mathrm{i}d) = R _ f(d,t) + \mathrm{i}I _ f(d,t)$ ($d = \sigma - 1/2 \ge 0$), the canonical transverse Wronskian is:
 
-1. **Universal Mother-Wavelet Dilation and Symmetric Branch Damping in the Selberg Class (Section 2)**: For any self-dual Dirichlet series $L(s,f) = \sum _ {n=1}^{\infty} a_f(n)n^{-s}$ ($a_f(n) \in \mathbb{R}$, $a_f(1)=1$) with completed function $\xi_f(s) = Q_f^s\gamma_f(s)L(s,f) = \xi_f(1-s)$ of degree $d_f > 0$ (including Riemann's $\zeta(s)$, odd primitive Dirichlet $L(s,\chi_5)$, Ramanujan's modular cusp form $L(s,\Delta)$ of degree $d _ {\Delta} = 2$, and $\mathcal{D} _ {\mathrm{DH}}(s){}$), the logarithmic kernel $\Phi_f(u) = \Phi_f(-u)$ decomposes into dilated, amplitude-weighted copies of a single class mother wavelet $\varphi_1^{(f)}(w)$ via $\phi_m^{(f)}(u) \equiv a_f(m)m^{-1/2}\varphi_1^{(f)}(u + \frac{1}{2}\ln m)$, while strict trigamma convexity enforces the Symmetric Branch-Damping Inequality $\rho _ {\Gamma,f}(d,t)\lvert a_f(n)\rvert n^{-1/2+d} < \mathrm{e}^{-2d\omega _ {n,Q_f}(t)}\lvert a_f(n)\rvert n^{-1/2-d} \le \lvert a_f(n)\rvert n^{-1/2-d}$ across all active modes $1 \le n \le N_f(t) = \lfloor\exp(\vartheta_f'(t))\rfloor$.
-2. **The Universal Phase-Independent Confocal Ellipse Identity (Section 3)**: Regardless of multiplicativity or an Euler product, every combined forward and reflected Riemann–Siegel mode $T_n^{(f)}(d,t) = 2a_n n^{-1/2}(\cosh(d\omega _ {n,Q})\cos\phi_n + \mathrm{i}\sinh(d\omega _ {n,Q})\sin\phi_n)$ satisfies the exact phase-independent increment law $\lvert T_n^{(f)}(d,t)\rvert^2 - \lvert T_n^{(f)}(0,t)\rvert^2 \equiv 4\frac{\lvert a_n\rvert^2}{n}\sinh^2(d\omega _ {n,Q}(t)) \ge 0$ for all $\phi_n(t) \in \mathbb{R}$, tracing a family of confocal ellipses with $d$-invariant focal distance $c_n^{(f)} \equiv 2\lvert a_n\rvert n^{-1/2}$, symplectic area $2\pi\frac{\lvert a_n\rvert^2}{n}\sinh(2d\lvert\omega _ {n,Q}\rvert)$, and diagonal ratio bounded by $\lvert a_n\rvert^2 n^{-(1+2d)}$.
-3. **Multiplicativity Defect $\pm(1+\kappa^2)$ and Breakdown of Prime-Gauge Purity at $N = 4, 6$ in $\mathcal{D} _ {\mathrm{DH}}(s)$ (Section 4)**: Whereas any Euler-product $L$-function satisfies Quadratic Prime-Power Purity $b_N^{\mathcal{E},(f)}(X) = \frac{\Lambda_f(N)}{\ln N}$ on $(X, X^2]$ (annihilating all non-prime-power composites), the Davenport–Heilbronn function $\mathcal{D} _ {\mathrm{DH}}(s)$ ($\kappa = \frac{\sqrt{10-2\sqrt{5}}-2}{\sqrt{5}-1} \approx 0.2840790438$) suffers an exact algebraic multiplicativity defect $\delta _ {\mathrm{DH}}(m,n) = a _ {\mathrm{DH}}(mn) - a _ {\mathrm{DH}}(m)a _ {\mathrm{DH}}(n) = \mp(1+\kappa^2) = \mp 1.0807009031\dots \neq 0$ at $N = 4 = 2^2$, $N = 6 = 2\cdot 3$, $N = 9 = 3^2$, and $N = 14 = 2\cdot 7$, leaving unsieved composite residuals $b_4^{\mathcal{E}}(X) = -(1+\kappa^2)$ and $b_6^{\mathcal{E}}(X) = +(1+\kappa^2)$. At the first off-line zero $(d _ {\star}, \gamma _ {\star}) = (0.3085171825, 85.6993484854)$ ($N_5(\gamma _ {\star}) = 8$), all active primes $p \in \lbrace 2,3,5,7\rbrace$ combined contribute only 38.82% of $\lvert T_1^{(\mathrm{DH})}\rvert$ (incapable of creating a zero), whereas the non-multiplicative composites $n \in \lbrace 4,6,8\rbrace$ (enhanced by $1/\kappa^2 = 12.3914\times$) supply the remaining 54.03% destructive interference.
-4. **Four-Fold Diagnostic Detection of the Off-Line Zero $(d _ {\star}, \gamma _ {\star})$ (Section 5)**: At $(d _ {\star}, \gamma _ {\star})$, all four diagnostic instruments register the topological and spectral breakdown: (i) saddle recombination creates a false critical point $z_c = \tau _ {\mathrm{false}} = 85.7472008265$ where $\Xi _ {\mathrm{DH}}(z_c) < 0$ and $\Xi _ {\mathrm{DH}}''(z_c) < 0$ share the same negative sign, reversing Cauchy–Riemann wall monotonicity $\frac{\mathrm{d}\lvert R _ {\mathrm{DH}}\rvert}{\mathrm{d}s}\rvert _ {\Gamma _ {\mathrm{false}}} = -\lvert\nabla I _ {\mathrm{DH}}\rvert < 0$ until $\Gamma _ {\mathrm{false}}$ collides with the detached real nodal parabola $R _ {\mathrm{DH}} = 0$ ($d _ {\mathrm{tip}} = 0.2980980120$); (ii) $\widetilde{W} _ {\mathrm{DH}}(d,\gamma _ {\star}) < 0$ on $[0, d _ {\star})$ with negative Transverse Integral Law; (iii) the Hadamard flux jumps by $\Phi _ {\mathrm{Had}}(d; d _ {\star}) = \pi\Theta(d - d _ {\star})$; and (iv) the de Branges inner function crosses $\lvert\Theta _ {\alpha}(\gamma _ {\star} + \mathrm{i}d _ {\star})\rvert = 1$ with Sylvester inertia jump $\nu _ - : 0 \to 1$.
+$$W_f(d,t) := \frac{1}{2}\,\partial_d \lvert\Xi_f(t - \mathrm{i}d)\rvert^2 = R_f\,\partial_t I_f - I_f\,\partial_t R_f = 16 \int_0^\infty y\sinh(2dy)\,I_f(y,t)\,\mathrm{d}y,$$
 
-## 2. Canonical Identities and Theorems
+where $I _ f(y,t) = 2\int _ 0^\infty \Phi _ f\left(\frac{y+r}{2}\right)\Phi _ f\left(\frac{y-r}{2}\right)\cos(2tr)\,\mathrm{d}r$ and $\widetilde{W} _ f(d,t) = W _ f(d,t)/d$.
 
-### 2.1 Universal Mother-Wavelet Dilation and Symmetric Branch Damping (Theorem 2.1)
+## 2. Verified Mathematical Results
 
-For any self-dual completed $L$-function $\xi_f(s) = \mathcal{G} _ f(s)L(s,f) = \xi_f(1-s)$ with Archimedean factor $\mathcal{G} _ f(s) = Q_f^s\gamma_f(s)$ of degree $d_f > 0$, define the class mother wavelet $\varphi_1^{(f)}(w)$ by inverse bilateral Laplace–Mellin transformation $\mathcal{G} _ f(s) = 4\int _ {-\infty}^{\infty} \varphi_1^{(f)}(w)\mathrm{e}^{2(s-1/2)w}\mathrm{d}w$. Explicitly, for Riemann's $\zeta(s)$ ($d _ {\zeta}=1$), the odd modulo $q$ class ($d_q=1$, including $L(s,\chi_5)$ and $\mathcal{D} _ {\mathrm{DH}}(s){}$), and Ramanujan's modular cusp form $L(s,\Delta)$ ($d _ {\Delta}=2$), the mother wavelets are
+1. **Hecke Theta-Integral Dilation & Tetragamma Branch Damping (Theorem 2.1):**
+   * By Mellin inversion (Hecke 1936), $\varphi _ m^{(f)}(u) = a _ f(m)m^{-1/2}\varphi _ 1^{(f)}(u + \frac{1}{2}\ln m)$.
+   * In the high-frequency regime $\lambda _ j t > \lambda _ j(\frac{1}{2}+d) + \lvert\mathrm{Re}\,\mu _ j\rvert + 1$, the second transverse derivative of $\mathcal{A} _ {\Gamma,f}^{\mathrm{sym}}(u,t) = g'(u) + g'(-u)$ is governed by the **tetragamma** function $\mathrm{Re}\,\psi _ 2(w _ j^\pm) > 0$ (not $\psi _ 1$; note $\psi _ 2(\sigma) < 0$ at $t = 0$), yielding $\rho _ {\Gamma,f}(d,t)n^{2d} < \mathrm{e}^{-2d\omega _ n(t)} \le 1$ for $1 \le n \le N _ f(t)$.
+2. **Single-Mode Hyperbolic Identity (Proposition 3.1):**
 
-$$\varphi_1^{(\zeta)}(w) = \left(2\pi^2\mathrm{e}^{9w} - 3\pi\mathrm{e}^{5w}\right)\mathrm{e}^{-\pi\mathrm{e}^{4w}}, \qquad \varphi_1^{(q)}(w) = \mathrm{e}^{3w}\mathrm{e}^{-\frac{\pi}{q}\mathrm{e}^{4w}}, \qquad \varphi_1^{(\Delta)}(w) = \frac{1}{2}\mathrm{e}^{12w}\mathrm{e}^{-2\pi\mathrm{e}^{2w}}.$$
+$$\lvert T_n^{(f)}(d,t)\rvert^2 - \lvert T_n^{(f)}(0,t)\rvert^2 = 4\,\frac{\lvert a_f(n)\rvert^2}{n}\,\sinh^2\bigl(d\,\omega_n(t)\bigr) \ge 0.$$
 
-Then the full kernel $\Phi_f(u) = \Phi_f(-u)$ in $\Xi_f(z) = 4\int _ {-\infty}^{\infty} \Phi_f(u)\mathrm{e}^{2\mathrm{i}zu}\mathrm{d}u$ decomposes into dilated shells
+   * Holds identically for $\zeta(s)$, $L(s,\Delta)$, and $\mathcal{D} _ {\mathrm{DH}}(s)$ right at $(d _ *,\gamma _ *)$, proving that single-mode growth and diagonal Wronskian positivity never prevent off-line zeros.
+3. **Multiplicativity Defect & Complete 8-Mode + Remainder Accounting (Theorem 4.1):**
+   * Note that $\zeta(s)$ and $\mathcal{D} _ {\mathrm{DH}}(s)$ both have unit-modulus composite coefficients $\lvert a(4)\rvert = \lvert a(6)\rvert = 1$; the Euler product does **not** make composite coefficients small in $\zeta(s)$. Instead, $\mathcal{D} _ {\mathrm{DH}}(s)$ has small prime coefficients $\lvert a _ {\mathrm{DH}}(2)\rvert = \lvert a _ {\mathrm{DH}}(3)\rvert = \kappa \approx 0.28407904$ while violating multiplicativity by $\delta _ {\mathrm{DH}}(m,n) = \pm(1 + \kappa^2) \approx \pm 1.08070090$ at $N \in \{4,6,9,14\}$.
+   * At $(d _ *,\gamma _ *) = (0.3085171825, 85.6993484854)$ with $N _ 5(\gamma _ *) = 8$:
+     * $\lvert T _ 1\rvert = 2.39194369$;
+     * Primes $p \in \{2,3,5,7\}$: $0.92849988$ (38.81780% of $\lvert T _ 1\rvert$);
+     * Composites $n \in \{4,6,8\}$: $1.29229533$ (54.02700% of $\lvert T _ 1\rvert$);
+     * Riemann–Siegel remainder $\lvert\mathcal{R} _ 8\rvert = \lvert T _ {1..8}\rvert = 0.17344609$ (7.25126% of $\lvert T _ 1\rvert$), closing $T _ {1..8} + \mathcal{R} _ 8 = 0$.
+4. **Four-Layer Zero-Detection Diagnostics (Proposition 5.1):**
+   * At $z _ {\mathrm{c}} = 85.7472008265$, $c _ 1^{\mathrm{DH}}(z _ {\mathrm{c}}) = -6.47422 \times 10^{-57} < 0$ and $\mathrm{d}\lvert R _ {\mathrm{DH}}\rvert/\mathrm{d}s < 0$ along $\Gamma _ {\mathrm{false}}$; $\widetilde{W} _ {\mathrm{DH}}(d,\gamma _ *) < 0$ on $[0,d _ *)$; $\Phi _ {\mathrm{Had}}(d;d _ *) = \pi\,\Theta(d - d _ *)$; Pick–Nevanlinna inertia $\nu _ - : 0 \to 1$.
 
-$$\Phi_f(u) = \sum _ {m=1}^{\infty} \phi_m^{(f)}(u), \qquad \phi_m^{(f)}(u) \equiv \frac{a_f(m)}{\sqrt{m}}\varphi_1^{(f)}\left(u + \frac{1}{2}\ln m\right) \qquad (\forall m \ge 1,   u \in \mathbb{C}),$$
+## 3. Scope Boundaries & Anti-Overclaim Rules
 
-and for every active mode $1 \le n \le N_f(t) = \lfloor\exp(\vartheta_f'(t))\rfloor$ ($\omega _ {n,Q_f}(t) := \vartheta_f'(t) - \ln n \ge 0$), strict trigamma curvature enforces
-
-$$\rho _ {\Gamma,f}(d,t)\lvert a_f(n)\rvert n^{-1/2+d} < \mathrm{e}^{-2d\omega _ {n,Q_f}(t)}\lvert a_f(n)\rvert n^{-1/2-d} \le \lvert a_f(n)\rvert n^{-1/2-d}.$$
-
-### 2.2 The Universal Phase-Independent Confocal Ellipse Identity (Theorem 3.1)
-
-For every combined forward and reflected Riemann–Siegel mode $T_n^{(f)}(d,t) := 2a_n n^{-1/2}(\cosh(d\omega _ {n,Q}(t))\cos\phi_n(t) + \mathrm{i}\sinh(d\omega _ {n,Q}(t))\sin\phi_n(t))$ with $a_n \in \mathbb{R}$ and $\phi_n(t) \in \mathbb{R}$, the identity $\cosh^2(d\omega _ {n,Q}) \equiv 1 + \sinh^2(d\omega _ {n,Q})$ combined with $\cos^2\phi_n + \sin^2\phi_n \equiv 1$ yields the exact phase-independent increment law
-
-$$\left\lvert T_n^{(f)}(d,t)\right\rvert^2 - \left\lvert T_n^{(f)}(0,t)\right\rvert^2 \equiv 4\frac{\lvert a_n\rvert^2}{n}\sinh^2\left(d\omega _ {n,Q}(t)\right) \ge 0 \qquad (\forall \phi_n(t) \in \mathbb{R}),$$
-
-with $d$-invariant focal distance $c_n^{(f)} = \sqrt{A_n(d,t)^2 - B_n(d,t)^2} \equiv 2\lvert a_n\rvert n^{-1/2}$, symplectic area $\mathrm{Area}(\mathcal{E} _ n^{(f)}(d,t)) \equiv 2\pi\frac{\lvert a_n\rvert^2}{n}\sinh(2d\lvert\omega _ {n,Q}(t)\rvert)$, and relative increment ratio bounded by $\lvert a_n\rvert^2 n^{-(1+2d)}$.
-
-### 2.3 Multiplicativity Defect $\pm(1+\kappa^2)$ and Prime-Gauge Breakdown (Theorem 4.1)
-
-For the Davenport–Heilbronn function $\mathcal{D} _ {\mathrm{DH}}(s) = \frac{1-\mathrm{i}\kappa}{2}L(s,\chi_5) + \frac{1+\mathrm{i}\kappa}{2}L(s,\overline{\chi_5})$ with $\kappa = \frac{\sqrt{10-2\sqrt{5}}-2}{\sqrt{5}-1} \approx 0.2840790438$, the 5-periodic coefficients $a _ {\mathrm{DH}}(1)=1, a _ {\mathrm{DH}}(2)=\kappa, a _ {\mathrm{DH}}(3)=-\kappa, a _ {\mathrm{DH}}(4)=-1, a _ {\mathrm{DH}}(5)=0$ exhibit the exact multiplicativity defect
-
-$$\delta _ {\mathrm{DH}}(2,2) = -(1 + \kappa^2), \qquad \delta _ {\mathrm{DH}}(2,3) = +(1 + \kappa^2), \qquad \delta _ {\mathrm{DH}}(3,3) = -(1 + \kappa^2), \qquad 1 + \kappa^2 = 1.08070090314928289127\dots \neq 0,$$
-
-leaving unsieved composite residuals $b_4^{\mathcal{E}}(X) = -(1+\kappa^2)$ and $b_6^{\mathcal{E}}(X) = +(1+\kappa^2)$ under any prime-generated gauge factor $E_X^{\mathcal{E}}(s)$ ($X \ge 5$).
-
-### 2.4 Four-Fold Diagnostic Detection of $(d _ {\star}, \gamma _ {\star})$ (Theorem 5.1)
-
-At the first off-line zero $(d _ {\star}, \gamma _ {\star}) = (0.3085171824566374, 85.69934848537759)$, $\Xi _ {\mathrm{DH}}(z)$ exhibits: (i) a critical-line saddle bifurcation at $z_c = \tau _ {\mathrm{false}} = 85.7472008265$ where $\Xi _ {\mathrm{DH}}(z_c)\Xi _ {\mathrm{DH}}''(z_c) > 0$, reversing wall monotonicity $\frac{\mathrm{d}\lvert R _ {\mathrm{DH}}\rvert}{\mathrm{d}s}\rvert _ {\Gamma _ {\mathrm{false}}} = -\lvert\nabla I _ {\mathrm{DH}}\rvert < 0$ until intersection with the detached parabola $R _ {\mathrm{DH}} = 0$ ($d _ {\mathrm{tip}} = 0.2980980120$); (ii) $\widetilde{W} _ {\mathrm{DH}}(d,\gamma _ {\star}) < 0$ on $[0, d _ {\star})$ with $\int_0^{d _ {\star}} u\widetilde{W} _ {\mathrm{DH}}(u,\gamma _ {\star})\mathrm{d}u = -\frac{1}{2}\lvert\Xi _ {\mathrm{DH}}(\gamma _ {\star})\rvert^2 < 0$; (iii) the quantized Hadamard flux jump $\Phi _ {\mathrm{Had}}(d; d _ {\star}) = \int _ {-\infty}^{\infty} K(d, d _ {\star}, u)\mathrm{d}u = \pi\Theta(d - d _ {\star})$ via exact arcsine cancellation $\mp\arcsin(d/d _ {\star})$; and (iv) the de Branges inner-function crossing $\lvert\Theta _ {\alpha}(\gamma _ {\star} + \mathrm{i}d _ {\star})\rvert = 1$ with Sylvester negative inertia jump $\nu _ - : 0 \to 1$.
-
-## 3. Reproducible Verification Workflow
-
-Run the standalone verification and figure-generation suite from the repository root:
-
-```bash
-python scripts/verify_paper12_selberg_davenport_heilbronn.py
-```
+* **Detection, not prevention:** The four diagnostics in Section 5 are contrapositives of classical RH equivalences (Hinkkanen 1997, Lagarias 1999, de Branges 1968, Arias de Reyna 2003); they detect off-line zeros of any real-even entire function and do not prove zero-freeness for Euler-product $L$-functions.
+* **Domain of convergence:** Infinite Euler products and Dirichlet logarithms $\sum \Lambda _ f(n)/(n^s\ln n)$ converge absolutely only on $\mathrm{Re}(s) > 1$; only finite prime-factor Dirichlet polynomials $E _ X^{(f)}(s)$ extend holomorphically without poles.

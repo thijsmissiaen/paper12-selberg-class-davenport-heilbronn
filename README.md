@@ -1,5 +1,6 @@
 # Hecke Theta-Integral Kernels and Single-Mode Damping in General Degree $L$-Functions versus Off-Line Zero Diagnostics in the Davenport–Heilbronn Counterexample
 
+**DOI (Zenodo / CERN):** [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24141091.svg)](https://doi.org/10.5281/zenodo.24141091) [`10.5281/zenodo.24141091`](https://doi.org/10.5281/zenodo.24141091) (v12.1.0: [`10.5281/zenodo.24141092`](https://doi.org/10.5281/zenodo.24141092))  
 **Author:** Thijs Missiaen (Independent Researcher, Belgium · ORCID: [0009-0007-3678-0810](https://orcid.org/0009-0007-3678-0810))  
 **Series:** Transverse Wronskian & Phase-Space Analysis of Riemann's $\Xi$-Function (Paper XII)  
 **MSC 2020:** Primary 11M41, 11M26; Secondary 11F66, 30D15, 46E22

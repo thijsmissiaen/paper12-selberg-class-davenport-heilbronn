@@ -8,6 +8,7 @@ authors:
     orcid: "https://orcid.org/0009-0007-3678-0810"
 title: "Hecke Theta-Integral Kernels and Single-Mode Damping in General Degree L-Functions versus Off-Line Zero Diagnostics in the Davenport-Heilbronn Counterexample"
 version: "12.1.0"
+doi: "10.5281/zenodo.24141091"
 date-released: "2026-11-11"
 url: "https://github.com/thijsmissiaen/paper12-selberg-class-davenport-heilbronn"
 repository-code: "https://github.com/thijsmissiaen/paper12-selberg-class-davenport-heilbronn"
